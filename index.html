@@ -396,13 +396,38 @@
         }
     };
 
-    const DB = [
-        { type: "choice", code: "print(1 // 2)", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["0", "0.5", "1", "0.0"], c: 0 },
-        { type: "choice", code: "x = 1\ny = 2\nx, y, z = x, x, y\nprint(z)", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["1", "2", "None", "NameError"], c: 0 },
-        { type: "drag", code: null, hu: "Rendezze sorba a kód végrehajtási sorrendjét!", en: "Arrange code in correct execution order!", de: "Bringen Sie den Code in die richtige Reihenfolge!", a: ["try:", "    val = 10 / 0", "except ZeroDivisionError:", "    print('Hiba')"], c: [0,1,2,3] },
-        { type: "fill", code: null, hu: "Egészítse ki a kódot!", en: "Complete the code structure!", de: "Vervollständigen Sie den Code!", parts: ["for i in", "[_]", "(5):", "\n    print(i)"], tokens: ["range", "list", "len"], c: ["range"] },
-        { type: "choice", code: "print(3 * '2')", hu: "Mi lesz a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["6", "222", "TypeError", "333"], c: 1 }
-    ];
+const DB = [
+    { type: "choice", code: "print(1 // 2)", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["0", "0.5", "1", "0.0"], c: 0 },
+    { type: "choice", code: "x = 1; y = 2; x, y, z = x, x, y; print(z)", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["1", "2", "None", "NameError"], c: 1 },
+    { type: "drag", code: "try-except sorrend", hu: "Rendezze sorba!", en: "Order it!", de: "Ordnen!", a: ["try:", "val = 10 / 0", "except ZeroDivisionError:", "print('Hiba')"], c: [0, 1, 2, 3] },
+    { type: "fill", code: "for i in range(5):", hu: "Mi hiányzik?", en: "What is missing?", de: "Was fehlt?", parts: ["for i in", "[_]", "(5):"], tokens: ["range", "in", "for"], c: ["range"] },
+    { type: "choice", code: "print(3 * '2')", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["6", "222", "TypeError", "333"], c: 1 },
+    { type: "fill", code: "lista = [1, 2]; lista.append(3)", hu: "Mi a metódus?", en: "What is the method?", de: "Was ist die Methode?", parts: ["lista", "[_]"], tokens: ["append", "add", "push"], c: ["append"] },
+    { type: "choice", code: "print(True and False)", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["True", "False", "None", "Error"], c: 1 },
+    { type: "choice", code: "def f(): pass", hu: "Melyik kulcsszóval?", en: "Which keyword?", de: "Welches Schlüsselwort?", a: ["func", "def", "define", "function"], c: 1 },
+    { type: "choice", code: "print(len('Python'))", hu: "Mi a hossz?", en: "What is the length?", de: "Was ist die Länge?", a: ["5", "6", "7", "Error"], c: 1 },
+    { type: "choice", code: "print(int(3.9))", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["3", "4", "3.9", "Error"], c: 0 },
+    { type: "choice", code: "print(10 % 2)", hu: "Mi a maradék?", en: "What is the remainder?", de: "Was ist der Rest?", a: ["0", "1", "2", "5"], c: 0 },
+    { type: "choice", code: "x = 5; x += 3", hu: "Mennyi x?", en: "How much is x?", de: "Wie viel ist x?", a: ["5", "3", "8", "15"], c: 2 },
+    { type: "choice", code: "print(type(5.5))", hu: "Mi a típus?", en: "What is the type?", de: "Was ist der Typ?", a: ["int", "float", "str", "bool"], c: 1 },
+    { type: "choice", code: "print(bool(0))", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["True", "False", "None", "Error"], c: 1 },
+    { type: "choice", code: "print('P' in 'Python')", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["True", "False", "None", "Error"], c: 0 },
+    { type: "drag", code: "Változócsere", hu: "Rendezze sorba a cserét!", en: "Order the swap!", de: "Ordnen Sie den Tausch!", a: ["temp = x", "x = y", "y = temp"], c: [0, 1, 2] },
+    { type: "choice", code: "for i in range(2):", hu: "Hányszor fut?", en: "How many times?", de: "Wie oft?", a: ["1", "2", "3", "0"], c: 1 },
+    { type: "choice", code: "print(min(1, 2, 3))", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["1", "2", "3", "Error"], c: 0 },
+    { type: "choice", code: "print(max(1, 2, 3))", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["1", "2", "3", "Error"], c: 2 },
+    { type: "choice", code: "print(abs(-5))", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["-5", "5", "0", "None"], c: 1 },
+    { type: "choice", code: "s = 'abc'; s.upper()", hu: "Mi lesz?", en: "What will it be?", de: "Was wird es?", a: ["abc", "ABC", "Abc", "Error"], c: 1 },
+    { type: "choice", code: "print(sum([1, 2]))", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["1", "2", "3", "12"], c: 2 },
+    { type: "choice", code: "print(2 ** 0)", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["0", "1", "2", "Error"], c: 1 },
+    { type: "choice", code: "print(10 / 2)", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["5", "5.0", "2", "Error"], c: 1 },
+    { type: "choice", code: "x = (1, 2)", hu: "Milyen típus?", en: "What type?", de: "Was für ein Typ?", a: ["list", "tuple", "set", "dict"], c: 1 },
+    { type: "choice", code: "x = {1, 2}", hu: "Milyen típus?", en: "What type?", de: "Was für ein Typ?", a: ["list", "tuple", "set", "dict"], c: 2 },
+    { type: "choice", code: "x = {'a': 1}", hu: "Milyen típus?", en: "What type?", de: "Was für ein Typ?", a: ["list", "tuple", "set", "dict"], c: 3 },
+    { type: "choice", code: "print(type(None))", hu: "Mi a típus?", en: "What is the type?", de: "Was ist der Typ?", a: ["NoneType", "null", "int", "None"], c: 0 },
+    { type: "choice", code: "print(round(2.6))", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["2", "3", "2.6", "Error"], c: 1 },
+    { type: "choice", code: "print('x' + 'y')", hu: "Mi a kimenet?", en: "What is the output?", de: "Was ist die Ausgabe?", a: ["xy", "x y", "TypeError", "x+y"], c: 0 }
+];
 
     let lang = "hu";
     let activeQ = [];
