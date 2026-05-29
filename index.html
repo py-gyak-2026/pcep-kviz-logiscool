@@ -161,8 +161,8 @@
         }
         .option-item:hover { border-color: var(--primary); background-color: rgba(55, 118, 171, 0.02); }
         .option-item.selected { border-color: var(--primary); background-color: rgba(55, 118, 171, 0.08); font-weight: 600; }
-        .option-item.correct { background-color: var(--correct) !important; border-color: var(--correct) !important; color: white; font-weight: 600; }
-        .option-item.incorrect { background-color: var(--incorrect) !important; border-color: var(--incorrect) !important; color: white; font-weight: 600; }
+        .option-item.correct { background-color: var(--correct) !important; border-color: var(--correct) !important; color: white !important; font-weight: 600; }
+        .option-item.incorrect { background-color: var(--incorrect) !important; border-color: var(--incorrect) !important; color: white !important; font-weight: 600; }
 
         .drag-zone-vertical { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
         .drag-item {
@@ -178,8 +178,9 @@
             align-items: center;
             gap: 12px;
         }
+        .drag-item.correct { background-color: rgba(16, 185, 129, 0.15) !important; border-color: var(--correct) !important; color: var(--correct) !important; font-weight: 700; }
+        .drag-item.incorrect { background-color: rgba(239, 68, 68, 0.15) !important; border-color: var(--incorrect) !important; color: var(--incorrect) !important; font-weight: 700; }
 
-        /* Kétoszlopos párosító grid */
         .matching-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -223,6 +224,8 @@
             cursor: pointer;
             font-weight: bold;
         }
+        .code-slot.correct { background-color: var(--correct) !important; border-color: var(--correct) !important; color: white !important; }
+        .code-slot.incorrect { background-color: var(--incorrect) !important; border-color: var(--incorrect) !important; color: white !important; }
         [data-theme="dark"] .code-slot { color: #ffffff; background-color: #1e293b; }
 
         .token-bank {
@@ -275,7 +278,6 @@
 
         .review-section { margin-top: 40px; text-align: left; border-top: 2px solid var(--border); padding-top: 35px; }
         .review-section h3 { font-size: 22px; font-weight: 800; margin-bottom: 20px; }
-        .review-section h3 { font-size: 22px; font-weight: 800; margin-bottom: 20px; }
         .review-item { background: var(--container-bg); padding: 22px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); border-left: 6px solid var(--border); }
         .review-item.good-l { border-left-color: var(--correct); }
         .review-item.bad-l { border-left-color: var(--incorrect); }
@@ -287,6 +289,13 @@
         .ans-user-bad { background-color: rgba(239, 68, 114, 0.15); color: var(--incorrect); }
         .ans-user-good { background-color: rgba(16, 185, 129, 0.15); color: var(--correct); }
         .ans-correct-spec { background-color: rgba(55, 118, 171, 0.12); color: var(--primary); border: 1px dashed var(--primary); }
+        
+        .instant-feedback-text {
+            margin-top: 15px;
+            font-weight: 700;
+            font-size: 16px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -308,7 +317,7 @@
         <div class="form-group">
             <label id="lMode">Értékelési és módszertani struktúra:</label>
             <select id="modeSelect">
-                <option value="exam" id="optMExam">Feladatsor (vizsga) mód – A modul lezárása után értékelődi.</option>
+                <option value="exam" id="optMExam">Feladatsor (vizsga) mód – A modul lezárása után értékelődik.</option>
                 <option value="instant" id="optMInstant">Azonnali értékelés mód – A modul kitöltése során azonnal értékelődik.</option>
             </select>
         </div>
@@ -363,7 +372,8 @@
             <div class="token-bank" id="tokenBank"></div>
         </div>
 
-        <button class="action-btn" id="btnNext" onclick="submitOrNext()">Következő kérdés</button>
+        <div id="instantFeedback" class="instant-feedback-text"></div>
+        <button class="action-btn" id="btnNext" onclick="submitOrNext()" style="margin-top: 15px;">Következő kérdés</button>
     </div>
 
     <div id="resultScreen" class="result-screen">
@@ -391,44 +401,44 @@
         hu: {
             title: "Python PCEP Kvíz", desc: "Üdvözöljük a professzionális felkészítő felületen. A modul célja a hivatalos tananyagban rögzített elméleti és gyakorlati ismeretek strukturált áttekintése és elmélyítése.",
             lM: "Értékelési és módszertani struktúra:", lO: "Kérdések sorrendje:", lS: "Random seed kód:", lC: "Kérdések száma:", bS: "Modul Indítása",
-            optMExam: "Feladatsor (vizsga) mód – A modul lezárása után értékelődik.", optMInstant: "Azonnali értékelés mód – A modul kitöltése során azonnal értékelődik.",
+            optMExam: "Feladatsor (vizsga) mód – A modul lezárása után értékelődirs.", optMInstant: "Azonnali értékelés mód – A modul kitöltése során azonnal értékelődik.",
             optONormal: "Eredeti fix sorrend (mindig ugyanaz)", optORandom: "Véletlenszerű keverés (Randomizált)",
-            optCCustom: "Egyedi szám...", optCAll: "Összes kérdés", btnNext: "Következő kérdés",
-            rChoice: "Válaszd ki a helyes opciót!", rDrag: "Húzza a kódsorokat/elemeket a megfelelő sorrendbe!", rFill: "Kattintson egy elemre lent, majd az üres [ _ ] helyre a kód kiegészítéséhez! Kattintson a beillesztett elemre a törléshez.",
+            optCCustom: "Egyedi szám...", optCAll: "Összes kérdés", btnNext: "Következő kérdés", btnContinue: "Tovább",
+            rChoice: "Válaszd ki a helyes opciót!", rDrag: "Húzza a kódsorokat/elemeket a megfelelő sorrendbe! Majd kattintson a gombra az ellenőrzéshez.", rFill: "Kattintson egy elemre lent, majd az üres [ _ ] helyre a kód kiegészítéséhez! Kattintson a beillesztett elemre a törléshez.",
             rMatch: "Kattintson egy literálra lent, majd rendelje hozzá a megfelelő adattípus melletti üres mezőhöz!",
             passed: "SIKERES VIZSGA: Ön átment a vizsgán!", failed: "SIKERTELEN VIZSGA: Nem érte el a 70%-ot!",
             mExam: "Feladatsor (vizsga) mód", mInstant: "Azonnali értékelés mód",
             revTitle: "Kérdések részletes kiértékelése:", uAns: "Te válaszod: ", cAns: "Helyes megoldás: ",
             lblPct: "Százalék", lblScore: "Pontszám", lblGood: "Helyes", lblBad: "Helytelen", rTitle: "Befejezve", btnRestart: "Újra",
-            darkBtn: "Sötét mód", lightBtn: "Világos mód"
+            darkBtn: "Sötét mód", lightBtn: "Világos mód", instantCorrect: "Helyes válasz! 👍", instantIncorrect: "Helytelen válasz! ❌"
         },
         en: {
             title: "Python PCEP Quiz", desc: "Welcome to the professional preparation interface. The goal of this module is the structured review and consolidation of theoretical and practical knowledge fixed in the official curriculum.",
             lM: "Evaluation Structure:", lO: "Question Order:", lS: "Random seed code:", lC: "Number of Questions:", bS: "Launch Module",
             optMExam: "Exam Mode – Evaluated at the very end.", optMInstant: "Instant Feedback Mode – Shows results during test.",
             optONormal: "Original fixed order (always the same)", optORandom: "Randomized shuffle",
-            optCCustom: "Custom number...", optCAll: "All questions", btnNext: "Next Question",
-            rChoice: "Select the correct option!", rDrag: "Drag lines/elements into the proper sequence!", rFill: "Click a token below, then click an empty [ _ ] slot to fill it! Click placed tokens to remove them.",
+            optCCustom: "Custom number...", optCAll: "All questions", btnNext: "Next Question", btnContinue: "Continue",
+            rChoice: "Select the correct option!", rDrag: "Drag lines/elements into the proper sequence! Then click the button to check.", rFill: "Click a token below, then click an empty [ _ ] slot to fill it! Click placed tokens to remove them.",
             rMatch: "Click a literal token below, then click the dashed box next to its data type to match them!",
             passed: "EXAM PASSED: You passed the exam!", failed: "EXAM FAILED: You did not reach 70%!",
             mExam: "Exam Mode", mInstant: "Instant Mode",
             revTitle: "Detailed Review of Questions:", uAns: "Your answer: ", cAns: "Correct answer: ",
             lblPct: "Percentage", lblScore: "Score", lblGood: "Correct", lblBad: "Incorrect", rTitle: "Completed", btnRestart: "Restart",
-            darkBtn: "Dark Mode", lightBtn: "Light Mode"
+            darkBtn: "Dark Mode", lightBtn: "Light Mode", instantCorrect: "Correct! 👍", instantIncorrect: "Incorrect! ❌"
         },
         de: {
             title: "Python PCEP Quiz", desc: "Willkommen auf der professionellen Vorbereitungsoberfläche. Ziel des Moduls ist die strukturierte Überprüfung und Vertiefung der im offiziellen Lehrplan verankerten theoretischen und praktischen Kenntnisse.",
             lM: "Bewertungsstruktur:", lO: "Fragenreihenfolge:", lS: "Random-Seed-Code:", lC: "Anzahl der Fragen:", bS: "Modul starten",
             optMExam: "Prüfungsmodus – Auswertung ganz am Ende.", optMInstant: "Sofortmodus – Ergebnisse während des Tests anzeigen.",
             optONormal: "Originale feste Reihenfolge (immer gleich)", optORandom: "Zufällige Mischung",
-            optCCustom: "Benutzerdefinierte Anzahl...", optCAll: "Alle Fragen", btnNext: "Nächste Frage",
-            rChoice: "Wählen Sie die richtige Option!", rDrag: "Ziehen Sie die Zeilen/Elemente in die richtige Reihenfolge!", rFill: "Klicken Sie unten auf ein Token und dann auf ein leeres [ _ ], um es zu füllen!",
+            optCCustom: "Benutzerdefinierte Anzahl...", optCAll: "Alle Fragen", btnNext: "Nächste Frage", btnContinue: "Weiter",
+            rChoice: "Wählen Sie die richtige Option!", rDrag: "Ziehen Sie die Zeilen/Elemente in die richtige Reihenfolge! Klicken Sie dann auf die Schaltfläche, um zu überprüfen.", rFill: "Klicken Sie unten auf ein Token und dann auf ein leeres [ _ ], um es zu füllen!",
             rMatch: "Klicken Sie unten auf ein Literal-Token und dann auf das gestrichelte Feld neben seinem Datentyp!",
             passed: "PRÜFUNG BESTANDEN: Sie haben bestanden!", failed: "PRÜFUNG FEHLGESCHLAGEN: Unter 70%!",
             mExam: "Prüfungsmodus", mInstant: "Sofortmodus",
             revTitle: "Detaillierte Überprüfung der Fragen:", uAns: "Deine Antwort: ", cAns: "Richtige Antwort: ",
             lblPct: "Prozentsatz", lblScore: "Ergebnis", lblGood: "Richtig", lblBad: "Falsch", rTitle: "Abgeschlossen", btnRestart: "Neustart",
-            darkBtn: "Dunkelmodus", lightBtn: "Lichtmodus"
+            darkBtn: "Dunkelmodus", lightBtn: "Lichtmodus", instantCorrect: "Richtig! 👍", instantIncorrect: "Falsch! ❌"
         }
     };
 
@@ -453,7 +463,7 @@
         },
         {
             type: "choice",
-            hu: "Egy .py kiterjesztésű forrásfájlként megadott kód futtatásához a következőkre van szükség:",
+            hu: "Egy .py kiterjesztű forrásfájlként megadott kód futtatásához a következőkre van szükség:",
             en: "To run the code given as a source file whose name has the .py extension, you need to have:",
             de: "Um den als Quelldatei mit der Erweiterung .py angegebenen Code auszuführen, benötigen Sie:",
             a: ["egy MS Windows számítógép (an MS Windows computer)", "egy Python szerkesztő (a Python editor)", "egy Python értelmező (a Python interpreter)", "egy Python fordító (a Python compiler)"],
@@ -632,7 +642,7 @@
             hu: "Mi igaz a Pythonban a kivételekre (exceptions)? (Válasszon két választ!)",
             en: "What is true about exceptions in Python? (Select two answers.)",
             de: "Was ist wahr über Ausnahmen in Python? (Wählen Sie zwei Antworten!)",
-            a: ["A try ágon belüli kód nem biztos, hogy teljesen végrehajtódik.", "Egy kezeletlen kivétel a program leállását okozza.", "IndexError váltható ki, ha egy nem létező szótár (dictionary) elemet próbál elérni.", "Ha a kiváltott kivételek közül bármelyik kezeletlen marad, hibaüzenet jelenik meg, ja program végrehajtása folytatódik."],
+            a: ["A try ágon belüli kód nem biztos, hogy teljesen végrehajtódik.", "Egy kezeletlen kivétel a program leállását caucus.", "IndexError váltható ki, ha egy nem létező szótár (dictionary) elemet próbál elérni.", "Ha a kiváltott kivételek közül bármelyik kezeletlen marad, hibaüzenet jelenik meg, ja program végrehajtása folytatódik."],
             c: [0, 1],
             multi: true
         },
@@ -707,6 +717,7 @@
     let mode = "exam";
     let answers = [];
     let selectedTokensForCurrentQuestion = [];
+    let isShowingFeedback = false;
 
     window.onload = function() {
         document.getElementById('seedInput').value = Math.random().toString(36).substring(2, 7);
@@ -743,7 +754,7 @@
         document.getElementById('optORandom').innerText = txts[lang].optORandom;
         document.getElementById('optCCustom').innerText = txts[lang].optCCustom;
         document.getElementById('optCAll').innerText = txts[lang].optCAll;
-        document.getElementById('btnNext').innerText = txts[lang].btnNext;
+        document.getElementById('btnNext').innerText = isShowingFeedback ? txts[lang].btnContinue : txts[lang].btnNext;
 
         document.getElementById('lblPct').innerText = txts[lang].lblPct;
         document.getElementById('lblScore').innerText = txts[lang].lblScore;
@@ -790,7 +801,9 @@
         }
 
         activeQ = pool.slice(0, Math.min(count, pool.length));
-        qIdx = 0; answers = new Array(activeQ.length).fill(null);
+        qIdx = 0; 
+        answers = new Array(activeQ.length).fill(null);
+        isShowingFeedback = false;
 
         document.getElementById('startScreen').style.display = 'none';
         document.getElementById('quizBox').style.display = 'block';
@@ -798,6 +811,10 @@
     }
 
     function showQuestion() {
+        isShowingFeedback = false;
+        document.getElementById('btnNext').innerText = txts[lang].btnNext;
+        document.getElementById('instantFeedback').style.display = 'none';
+
         let q = activeQ[qIdx];
         document.getElementById('pTag').innerText = `${qIdx + 1} / ${activeQ.length}`;
         document.getElementById('mTag').innerText = mode === 'exam' ? txts[lang].mExam : txts[lang].mInstant;
@@ -814,7 +831,7 @@
         if (q.type === "choice") {
             document.getElementById('rTag').innerText = txts[lang].rChoice;
             let container = document.getElementById('optList'); container.innerHTML = ''; container.style.display = 'block';
-            if (q.multi) answers[qIdx] = answers[qIdx] || [];
+            if (q.multi && !answers[qIdx]) answers[qIdx] = [];
 
             q.a.forEach((opt, i) => {
                 let li = document.createElement('li'); li.className = 'option-item'; li.innerText = opt;
@@ -822,6 +839,7 @@
                 else if (!q.multi && answers[qIdx] === i) li.classList.add('selected');
 
                 li.onclick = () => {
+                    if (isShowingFeedback) return;
                     if (q.multi) {
                         if (answers[qIdx].includes(i)) {
                             answers[qIdx] = answers[qIdx].filter(item => item !== i);
@@ -830,9 +848,18 @@
                             answers[qIdx].push(i);
                             li.classList.add('selected');
                         }
+                        // Ha elérte a 2 kiválasztott választ azonnali módban, rögtön ellenőriz
+                        if (mode === "instant" && answers[qIdx].length === 2) {
+                            checkInstantAnswer();
+                        }
                     } else {
                         document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
-                        li.classList.add('selected'); answers[qIdx] = i;
+                        li.classList.add('selected'); 
+                        answers[qIdx] = i;
+                        // Egyszeres választásnál azonnal ellenőriz
+                        if (mode === "instant") {
+                            checkInstantAnswer();
+                        }
                     }
                 };
                 container.appendChild(li);
@@ -847,14 +874,18 @@
             currentOrder.forEach((item, index) => {
                 let div = document.createElement('div'); div.className = 'drag-item'; div.innerText = `☰  ${item.t}`; div.dataset.id = item.i;
                 div.draggable = true;
-                div.ondragstart = (e) => { e.dataTransfer.setData("text/plain", index); };
+                div.ondragstart = (e) => { if(isShowingFeedback) return; e.dataTransfer.setData("text/plain", index); };
                 div.ondragover = (e) => { e.preventDefault(); };
                 div.ondrop = (e) => {
+                    if (isShowingFeedback) return;
                     let oldIdx = parseInt(e.dataTransfer.getData("text/plain"));
                     let temp = answers[qIdx][oldIdx];
                     answers[qIdx].splice(oldIdx, 1);
                     answers[qIdx].splice(index, 0, temp);
+                    
+                    let current_feedback_state = isShowingFeedback;
                     showQuestion();
+                    isShowingFeedback = current_feedback_state;
                 };
                 container.appendChild(div);
             });
@@ -888,16 +919,23 @@
                 slotDiv.innerText = answers[qIdx][idx];
                 slotDiv.style.borderStyle = "solid";
                 slotDiv.onclick = () => {
+                    if (isShowingFeedback) return;
                     answers[qIdx][idx] = null;
                     renderMatchingInterface(q);
                 };
             } else {
                 slotDiv.innerText = "[ Üres hely ]";
                 slotDiv.onclick = () => {
+                    if (isShowingFeedback) return;
                     let active = document.querySelector('#matchingBank .token.active-pick');
                     if (active) {
                         answers[qIdx][idx] = active.innerText;
                         renderMatchingInterface(q);
+                        
+                        // Azonnali ellenőrzés ha az összes slot be lett töltve
+                        if (mode === "instant" && !answers[qIdx].includes(null)) {
+                            checkInstantAnswer();
+                        }
                     }
                 };
             }
@@ -910,6 +948,7 @@
             if (answers[qIdx].includes(t)) return;
             let tok = document.createElement('span'); tok.className = 'token'; tok.innerText = t;
             tok.onclick = () => {
+                if (isShowingFeedback) return;
                 let prev = document.querySelector('#matchingBank .token.active-pick');
                 if (prev) prev.classList.remove('active-pick');
                 if (prev !== tok) tok.classList.add('active-pick');
@@ -931,16 +970,24 @@
                     slot.innerText = selectedTokensForCurrentQuestion[currentSlot];
                     slot.style.borderStyle = "solid";
                     slot.onclick = () => {
+                        if (isShowingFeedback) return;
                         selectedTokensForCurrentQuestion[currentSlot] = null;
                         renderFillInterface(q);
                     };
                 } else {
                     slot.innerText = "[ _ ]";
                     slot.onclick = () => {
+                        if (isShowingFeedback) return;
                         let activeNode = document.querySelector('#tokenBank .token.active-pick');
                         if (activeNode) {
                             selectedTokensForCurrentQuestion[currentSlot] = activeNode.innerText;
                             renderFillInterface(q);
+                            
+                            // Azonnali ellenőrzés ha mind ki lett töltve
+                            if (mode === "instant" && !selectedTokensForCurrentQuestion.includes(null)) {
+                                answers[qIdx] = [...selectedTokensForCurrentQuestion];
+                                checkInstantAnswer();
+                            }
                         }
                     };
                 }
@@ -957,6 +1004,7 @@
             if (selectedTokensForCurrentQuestion.includes(t)) return;
             let tok = document.createElement('span'); tok.className = 'token'; tok.innerText = t;
             tok.onclick = () => { 
+                if (isShowingFeedback) return;
                 let prev = document.querySelector('#tokenBank .token.active-pick');
                 if (prev) prev.classList.remove('active-pick');
                 if (prev !== tok) tok.classList.add('active-pick');
@@ -965,17 +1013,88 @@
         });
     }
 
-    function submitOrNext() {
+    function checkInstantAnswer() {
         let q = activeQ[qIdx];
+        
         if (q.type === "drag") {
             answers[qIdx] = Array.from(document.getElementById('dragList').children).map(c => parseInt(c.dataset.id));
         } else if (q.type === "fill") {
             answers[qIdx] = [...selectedTokensForCurrentQuestion];
         }
 
+        let isOk = false;
+
+        if (q.type === 'choice') {
+            let items = document.querySelectorAll('.option-item');
+            if (q.multi) {
+                let uArr = answers[qIdx] ? [...answers[qIdx]].sort() : [];
+                let cArr = [...q.c].sort();
+                isOk = JSON.stringify(uArr) === JSON.stringify(cArr);
+                items.forEach((item, idx) => {
+                    if (q.c.includes(idx)) item.classList.add('correct');
+                    else if (uArr.includes(idx)) item.classList.add('incorrect');
+                });
+            } else {
+                isOk = (answers[qIdx] === q.c);
+                items.forEach((item, idx) => {
+                    if (idx === q.c) item.classList.add('correct');
+                    else if (idx === answers[qIdx]) item.classList.add('incorrect');
+                });
+            }
+        } 
+        else if (q.type === 'drag') {
+            let currentIds = answers[qIdx].map(item => item.i !== undefined ? item.i : item);
+            isOk = JSON.stringify(currentIds) === JSON.stringify(q.c);
+            let items = document.querySelectorAll('.drag-item');
+            items.forEach((item, idx) => {
+                let id = parseInt(item.dataset.id);
+                if (q.c[idx] === id) item.classList.add('correct');
+                else item.classList.add('incorrect');
+            });
+        } 
+        else if (q.type === 'matching' || q.type === 'fill') {
+            isOk = JSON.stringify(answers[qIdx]) === JSON.stringify(q.c);
+            let slots = document.querySelectorAll('.code-slot');
+            slots.forEach((slot, idx) => {
+                if (answers[qIdx] && answers[qIdx][idx] === q.c[idx]) slot.classList.add('correct');
+                else slot.classList.add('incorrect');
+            });
+        }
+
+        let fbox = document.getElementById('instantFeedback');
+        if (isOk) {
+            fbox.innerText = txts[lang].instantCorrect;
+            fbox.style.color = "var(--correct)";
+        } else {
+            fbox.innerText = txts[lang].instantIncorrect;
+            fbox.style.color = "var(--incorrect)";
+        }
+        fbox.style.display = 'block';
+
+        isShowingFeedback = true;
+        document.getElementById('btnNext').innerText = txts[lang].btnContinue;
+    }
+
+    function submitOrNext() {
+        // Ha azonnali módban vagyunk, és a Sorbarendezős kérdésnél járunk (ahol manuális gombellenőrzés kell)
+        if (mode === "instant" && !isShowingFeedback) {
+            checkInstantAnswer();
+            return;
+        }
+
+        let q = activeQ[qIdx];
+        if (q.type === "drag" && mode === "exam") {
+            answers[qIdx] = Array.from(document.getElementById('dragList').children).map(c => parseInt(c.dataset.id));
+        } else if (q.type === "fill" && mode === "exam") {
+            answers[qIdx] = [...selectedTokensForCurrentQuestion];
+        }
+
         qIdx++;
-        if (qIdx < activeQ.length) showQuestion();
-        else endQuiz();
+        if (qIdx < activeQ.length) {
+            showQuestion();
+        } else {
+            endQuiz();
+        }
     }
 
     function endQuiz() {
@@ -999,14 +1118,14 @@
                     correctAnsString = cArr.map(idx => q.a[idx]).join(" | ");
                 } else {
                     isOk = (answers[i] === q.c);
-                    userAnsString = answers[i] !== null ? q.a[answers[i]] : "Nincs megadva";
+                    userAnsString = answers[i] !== null && answers[i] !== undefined ? q.a[answers[i]] : "Nincs megadva";
                     correctAnsString = q.a[q.c];
                 }
             } 
             else if (q.type === 'drag') {
-                let currentIds = answers[i].map(item => item.i !== undefined ? item.i : item);
+                let currentIds = answers[i] ? answers[i].map(item => item.i !== undefined ? item.i : item) : [];
                 isOk = JSON.stringify(currentIds) === JSON.stringify(q.c);
-                userAnsString = currentIds.map(idx => q.a[idx]).join(" ➔ ");
+                userAnsString = currentIds.length > 0 ? currentIds.map(idx => q.a[idx]).join(" ➔ ") : "Nincs megadva";
                 correctAnsString = q.c.map(idx => q.a[idx]).join(" ➔ ");
             } 
             else if (q.type === 'matching') {
