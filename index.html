@@ -163,7 +163,6 @@
         .option-item.selected { border-color: var(--primary); background-color: rgba(55, 118, 171, 0.08); font-weight: 600; }
         .option-item.correct { background-color: var(--correct) !important; border-color: var(--correct) !important; color: white; font-weight: 600; }
         .option-item.incorrect { background-color: var(--incorrect) !important; border-color: var(--incorrect) !important; color: white; font-weight: 600; }
-        .option-item.missed { border-color: var(--primary); background-color: rgba(55, 118, 171, 0.15); font-weight: 600; }
 
         .drag-zone-vertical { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
         .drag-item {
@@ -179,9 +178,8 @@
             align-items: center;
             gap: 12px;
         }
-        .drag-item.correct { background-color: rgba(16, 185, 129, 0.15); border-color: var(--correct); color: var(--correct); font-weight: 600; }
-        .drag-item.incorrect { background-color: rgba(239, 68, 68, 0.15); border-color: var(--incorrect); color: var(--incorrect); font-weight: 600; }
 
+        /* Kétoszlopos párosító grid */
         .matching-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -225,8 +223,6 @@
             cursor: pointer;
             font-weight: bold;
         }
-        .code-slot.correct { background-color: var(--correct) !important; border-color: var(--correct) !important; color: white !important; }
-        .code-slot.incorrect { background-color: var(--incorrect) !important; border-color: var(--incorrect) !important; color: white !important; }
         [data-theme="dark"] .code-slot { color: #ffffff; background-color: #1e293b; }
 
         .token-bank {
@@ -279,6 +275,7 @@
 
         .review-section { margin-top: 40px; text-align: left; border-top: 2px solid var(--border); padding-top: 35px; }
         .review-section h3 { font-size: 22px; font-weight: 800; margin-bottom: 20px; }
+        .review-section h3 { font-size: 22px; font-weight: 800; margin-bottom: 20px; }
         .review-item { background: var(--container-bg); padding: 22px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); border-left: 6px solid var(--border); }
         .review-item.good-l { border-left-color: var(--correct); }
         .review-item.bad-l { border-left-color: var(--incorrect); }
@@ -290,13 +287,6 @@
         .ans-user-bad { background-color: rgba(239, 68, 114, 0.15); color: var(--incorrect); }
         .ans-user-good { background-color: rgba(16, 185, 129, 0.15); color: var(--correct); }
         .ans-correct-spec { background-color: rgba(55, 118, 171, 0.12); color: var(--primary); border: 1px dashed var(--primary); }
-        
-        .instant-feedback-text {
-            margin-top: 15px;
-            font-weight: 700;
-            font-size: 16px;
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -373,8 +363,7 @@
             <div class="token-bank" id="tokenBank"></div>
         </div>
 
-        <div id="instantFeedback" class="instant-feedback-text"></div>
-        <button class="action-btn" id="btnNext" onclick="submitOrNext()" style="margin-top: 15px;">Következő kérdés</button>
+        <button class="action-btn" id="btnNext" onclick="submitOrNext()">Következő kérdés</button>
     </div>
 
     <div id="resultScreen" class="result-screen">
@@ -404,42 +393,42 @@
             lM: "Értékelési és módszertani struktúra:", lO: "Kérdések sorrendje:", lS: "Random seed kód:", lC: "Kérdések száma:", bS: "Modul Indítása",
             optMExam: "Feladatsor (vizsga) mód – A modul lezárása után értékelődik.", optMInstant: "Azonnali értékelés mód – A modul kitöltése során azonnal értékelődik.",
             optONormal: "Eredeti fix sorrend (mindig ugyanaz)", optORandom: "Véletlenszerű keverés (Randomizált)",
-            optCCustom: "Egyedi szám...", optCAll: "Összes kérdés", btnNext: "Következő kérdés", btnContinue: "Tovább",
+            optCCustom: "Egyedi szám...", optCAll: "Összes kérdés", btnNext: "Következő kérdés",
             rChoice: "Válaszd ki a helyes opciót!", rDrag: "Húzza a kódsorokat/elemeket a megfelelő sorrendbe!", rFill: "Kattintson egy elemre lent, majd az üres [ _ ] helyre a kód kiegészítéséhez! Kattintson a beillesztett elemre a törléshez.",
             rMatch: "Kattintson egy literálra lent, majd rendelje hozzá a megfelelő adattípus melletti üres mezőhöz!",
             passed: "SIKERES VIZSGA: Ön átment a vizsgán!", failed: "SIKERTELEN VIZSGA: Nem érte el a 70%-ot!",
             mExam: "Feladatsor (vizsga) mód", mInstant: "Azonnali értékelés mód",
             revTitle: "Kérdések részletes kiértékelése:", uAns: "Te válaszod: ", cAns: "Helyes megoldás: ",
             lblPct: "Százalék", lblScore: "Pontszám", lblGood: "Helyes", lblBad: "Helytelen", rTitle: "Befejezve", btnRestart: "Újra",
-            darkBtn: "Sötét mód", lightBtn: "Világos mód", instantCorrect: "Helyes válasz! 👍", instantIncorrect: "Helytelen válasz! ❌"
+            darkBtn: "Sötét mód", lightBtn: "Világos mód"
         },
         en: {
             title: "Python PCEP Quiz", desc: "Welcome to the professional preparation interface. The goal of this module is the structured review and consolidation of theoretical and practical knowledge fixed in the official curriculum.",
             lM: "Evaluation Structure:", lO: "Question Order:", lS: "Random seed code:", lC: "Number of Questions:", bS: "Launch Module",
             optMExam: "Exam Mode – Evaluated at the very end.", optMInstant: "Instant Feedback Mode – Shows results during test.",
             optONormal: "Original fixed order (always the same)", optORandom: "Randomized shuffle",
-            optCCustom: "Custom number...", optCAll: "All questions", btnNext: "Next Question", btnContinue: "Continue",
+            optCCustom: "Custom number...", optCAll: "All questions", btnNext: "Next Question",
             rChoice: "Select the correct option!", rDrag: "Drag lines/elements into the proper sequence!", rFill: "Click a token below, then click an empty [ _ ] slot to fill it! Click placed tokens to remove them.",
             rMatch: "Click a literal token below, then click the dashed box next to its data type to match them!",
             passed: "EXAM PASSED: You passed the exam!", failed: "EXAM FAILED: You did not reach 70%!",
             mExam: "Exam Mode", mInstant: "Instant Mode",
             revTitle: "Detailed Review of Questions:", uAns: "Your answer: ", cAns: "Correct answer: ",
             lblPct: "Percentage", lblScore: "Score", lblGood: "Correct", lblBad: "Incorrect", rTitle: "Completed", btnRestart: "Restart",
-            darkBtn: "Dark Mode", lightBtn: "Light Mode", instantCorrect: "Correct! 👍", instantIncorrect: "Incorrect! ❌"
+            darkBtn: "Dark Mode", lightBtn: "Light Mode"
         },
         de: {
             title: "Python PCEP Quiz", desc: "Willkommen auf der professionellen Vorbereitungsoberfläche. Ziel des Moduls ist die strukturierte Überprüfung und Vertiefung der im offiziellen Lehrplan verankerten theoretischen und praktischen Kenntnisse.",
             lM: "Bewertungsstruktur:", lO: "Fragenreihenfolge:", lS: "Random-Seed-Code:", lC: "Anzahl der Fragen:", bS: "Modul starten",
             optMExam: "Prüfungsmodus – Auswertung ganz am Ende.", optMInstant: "Sofortmodus – Ergebnisse während des Tests anzeigen.",
             optONormal: "Originale feste Reihenfolge (immer gleich)", optORandom: "Zufällige Mischung",
-            optCCustom: "Benutzerdefinierte Anzahl...", optCAll: "Alle Fragen", btnNext: "Nächste Frage", btnContinue: "Weiter",
+            optCCustom: "Benutzerdefinierte Anzahl...", optCAll: "Alle Fragen", btnNext: "Nächste Frage",
             rChoice: "Wählen Sie die richtige Option!", rDrag: "Ziehen Sie die Zeilen/Elemente in die richtige Reihenfolge!", rFill: "Klicken Sie unten auf ein Token und dann auf ein leeres [ _ ], um es zu füllen!",
             rMatch: "Klicken Sie unten auf ein Literal-Token und dann auf das gestrichelte Feld neben seinem Datentyp!",
             passed: "PRÜFUNG BESTANDEN: Sie haben bestanden!", failed: "PRÜFUNG FEHLGESCHLAGEN: Unter 70%!",
             mExam: "Prüfungsmodus", mInstant: "Sofortmodus",
             revTitle: "Detaillierte Überprüfung der Fragen:", uAns: "Deine Antwort: ", cAns: "Richtige Antwort: ",
             lblPct: "Prozentsatz", lblScore: "Ergebnis", lblGood: "Richtig", lblBad: "Falsch", rTitle: "Abgeschlossen", btnRestart: "Neustart",
-            darkBtn: "Dunkelmodus", lightBtn: "Lichtmodus", instantCorrect: "Richtig! 👍", instantIncorrect: "Falsch! ❌"
+            darkBtn: "Dunkelmodus", lightBtn: "Lichtmodus"
         }
     };
 
@@ -464,7 +453,7 @@
         },
         {
             type: "choice",
-            hu: "Egy .py kiterjesztű forrásfájlként megadott kód futtatásához a következőkre van szükség:",
+            hu: "Egy .py kiterjesztésű forrásfájlként megadott kód futtatásához a következőkre van szükség:",
             en: "To run the code given as a source file whose name has the .py extension, you need to have:",
             de: "Um den als Quelldatei mit der Erweiterung .py angegebenen Code auszuführen, benötigen Sie:",
             a: ["egy MS Windows számítógép (an MS Windows computer)", "egy Python szerkesztő (a Python editor)", "egy Python értelmező (a Python interpreter)", "egy Python fordító (a Python compiler)"],
@@ -718,7 +707,6 @@
     let mode = "exam";
     let answers = [];
     let selectedTokensForCurrentQuestion = [];
-    let isShowingFeedback = false; // Új változó az azonnali ellenőrzés fázisának jelzésére
 
     window.onload = function() {
         document.getElementById('seedInput').value = Math.random().toString(36).substring(2, 7);
@@ -741,3 +729,326 @@
     }
 
     function translateHome() {
+        document.getElementById('tTitle').innerText = txts[lang].title;
+        document.getElementById('tDesc').innerText = txts[lang].desc;
+        document.getElementById('lMode').innerText = txts[lang].lM;
+        document.getElementById('lOrder').innerText = txts[lang].lO;
+        document.getElementById('lSeed').innerText = txts[lang].lS;
+        document.getElementById('lCount').innerText = txts[lang].lC;
+        document.getElementById('btnStart').innerText = txts[lang].bS;
+        
+        document.getElementById('optMExam').innerText = txts[lang].optMExam;
+        document.getElementById('optMInstant').innerText = txts[lang].optMInstant;
+        document.getElementById('optONormal').innerText = txts[lang].optONormal;
+        document.getElementById('optORandom').innerText = txts[lang].optORandom;
+        document.getElementById('optCCustom').innerText = txts[lang].optCCustom;
+        document.getElementById('optCAll').innerText = txts[lang].optCAll;
+        document.getElementById('btnNext').innerText = txts[lang].btnNext;
+
+        document.getElementById('lblPct').innerText = txts[lang].lblPct;
+        document.getElementById('lblScore').innerText = txts[lang].lblScore;
+        document.getElementById('lblGood').innerText = txts[lang].lblGood;
+        document.getElementById('lblBad').innerText = txts[lang].lblBad;
+        document.getElementById('rTitle').innerText = txts[lang].rTitle;
+        document.getElementById('btnRestart').innerText = txts[lang].btnRestart;
+    }
+
+    function cyrb128(str) {
+        let h1 = 1779033703, h2 = 302473454, h3 = 3362453659, h4 = 502494952;
+        for (let i = 0, k; i < str.length; i++) {
+            k = str.charCodeAt(i);
+            h1 = h2 ^ Math.imul(h1 ^ k, 597399067); h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+            h3 = h4 ^ Math.imul(h3 ^ k, 951274213); h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+        }
+        return [(h1>>>0), (h2>>>0), (h3>>>0), (h4>>>0)];
+    }
+    function sfc32(a, b, c, d) {
+        return function() {
+            a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+            let t = (a + b) | 0; a = b ^ (b >>> 9);
+            b = (c + (c << 3)) | 0; c = (c << 21) | (c >>> 11);
+            d = (d + 1) | 0; t = (t + d) | 0; c = (c + t) | 0;
+            return (t >>> 0) / 4294967296;
+        }
+    }
+
+    function initQuiz() {
+        mode = document.getElementById('modeSelect').value;
+        let order = document.getElementById('orderSelect').value;
+        let countVal = document.getElementById('countSelect').value;
+        let count = countVal === 'custom' ? parseInt(document.getElementById('customCount').value) : (countVal === 'all' ? DB.length : parseInt(countVal));
+
+        let pool = [...DB];
+        if (order === "random") {
+            let seedStr = document.getElementById('seedInput').value || "pcep";
+            let seedParts = cyrb128(seedStr);
+            let randFn = sfc32(seedParts[0], seedParts[1], seedParts[2], seedParts[3]);
+            for (let i = pool.length - 1; i > 0; i--) {
+                const j = Math.floor(randFn() * (i + 1));
+                [pool[i], pool[j]] = [pool[j], pool[i]];
+            }
+        }
+
+        activeQ = pool.slice(0, Math.min(count, pool.length));
+        qIdx = 0; answers = new Array(activeQ.length).fill(null);
+
+        document.getElementById('startScreen').style.display = 'none';
+        document.getElementById('quizBox').style.display = 'block';
+        showQuestion();
+    }
+
+    function showQuestion() {
+        let q = activeQ[qIdx];
+        document.getElementById('pTag').innerText = `${qIdx + 1} / ${activeQ.length}`;
+        document.getElementById('mTag').innerText = mode === 'exam' ? txts[lang].mExam : txts[lang].mInstant;
+        document.getElementById('qText').innerText = q[lang];
+
+        let cb = document.getElementById('cBlock');
+        if (q.code) { cb.innerText = q.code; cb.style.display = 'block'; } else { cb.style.display = 'none'; }
+
+        document.getElementById('optList').style.display = 'none';
+        document.getElementById('dragList').style.display = 'none';
+        document.getElementById('fillWrapper').style.display = 'none';
+        document.getElementById('matchingWrapper').style.display = 'none';
+
+        if (q.type === "choice") {
+            document.getElementById('rTag').innerText = txts[lang].rChoice;
+            let container = document.getElementById('optList'); container.innerHTML = ''; container.style.display = 'block';
+            if (q.multi) answers[qIdx] = answers[qIdx] || [];
+
+            q.a.forEach((opt, i) => {
+                let li = document.createElement('li'); li.className = 'option-item'; li.innerText = opt;
+                if (q.multi && answers[qIdx] && answers[qIdx].includes(i)) li.classList.add('selected');
+                else if (!q.multi && answers[qIdx] === i) li.classList.add('selected');
+
+                li.onclick = () => {
+                    if (q.multi) {
+                        if (answers[qIdx].includes(i)) {
+                            answers[qIdx] = answers[qIdx].filter(item => item !== i);
+                            li.classList.remove('selected');
+                        } else if (answers[qIdx].length < 2) {
+                            answers[qIdx].push(i);
+                            li.classList.add('selected');
+                        }
+                    } else {
+                        document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
+                        li.classList.add('selected'); answers[qIdx] = i;
+                    }
+                };
+                container.appendChild(li);
+            });
+        } 
+        else if (q.type === "drag") {
+            document.getElementById('rTag').innerText = txts[lang].rDrag;
+            let container = document.getElementById('dragList'); container.innerHTML = ''; container.style.display = 'flex';
+            let currentOrder = answers[qIdx] || q.a.map((t, i) => ({t, i})).sort(() => Math.random() - 0.5);
+            answers[qIdx] = currentOrder;
+
+            currentOrder.forEach((item, index) => {
+                let div = document.createElement('div'); div.className = 'drag-item'; div.innerText = `☰  ${item.t}`; div.dataset.id = item.i;
+                div.draggable = true;
+                div.ondragstart = (e) => { e.dataTransfer.setData("text/plain", index); };
+                div.ondragover = (e) => { e.preventDefault(); };
+                div.ondrop = (e) => {
+                    let oldIdx = parseInt(e.dataTransfer.getData("text/plain"));
+                    let temp = answers[qIdx][oldIdx];
+                    answers[qIdx].splice(oldIdx, 1);
+                    answers[qIdx].splice(index, 0, temp);
+                    showQuestion();
+                };
+                container.appendChild(div);
+            });
+        }
+        else if (q.type === "matching") {
+            document.getElementById('rTag').innerText = txts[lang].rMatch;
+            document.getElementById('matchingWrapper').style.display = 'block';
+            if (!answers[qIdx]) answers[qIdx] = new Array(q.leftLabels.length).fill(null);
+            renderMatchingInterface(q);
+        }
+        else if (q.type === "fill") {
+            document.getElementById('rTag').innerText = txts[lang].rFill;
+            document.getElementById('fillWrapper').style.display = 'block';
+            let slotCount = q.parts.filter(p => p === "[_]").length;
+            if (!answers[qIdx] || answers[qIdx].length !== slotCount) {
+                selectedTokensForCurrentQuestion = new Array(slotCount).fill(null);
+            } else {
+                selectedTokensForCurrentQuestion = [...answers[qIdx]];
+            }
+            renderFillInterface(q);
+        }
+    }
+
+    function renderMatchingInterface(q) {
+        let grid = document.getElementById('matchingGrid'); grid.innerHTML = '';
+        q.leftLabels.forEach((lbl, idx) => {
+            let labelDiv = document.createElement('div'); labelDiv.className = 'matching-row-label'; labelDiv.innerText = lbl;
+            let slotDiv = document.createElement('div'); slotDiv.className = 'code-slot';
+            
+            if (answers[qIdx][idx] !== null) {
+                slotDiv.innerText = answers[qIdx][idx];
+                slotDiv.style.borderStyle = "solid";
+                slotDiv.onclick = () => {
+                    answers[qIdx][idx] = null;
+                    renderMatchingInterface(q);
+                };
+            } else {
+                slotDiv.innerText = "[ Üres hely ]";
+                slotDiv.onclick = () => {
+                    let active = document.querySelector('#matchingBank .token.active-pick');
+                    if (active) {
+                        answers[qIdx][idx] = active.innerText;
+                        renderMatchingInterface(q);
+                    }
+                };
+            }
+            grid.appendChild(labelDiv);
+            grid.appendChild(slotDiv);
+        });
+
+        let bank = document.getElementById('matchingBank'); bank.innerHTML = '';
+        q.tokens.forEach(t => {
+            if (answers[qIdx].includes(t)) return;
+            let tok = document.createElement('span'); tok.className = 'token'; tok.innerText = t;
+            tok.onclick = () => {
+                let prev = document.querySelector('#matchingBank .token.active-pick');
+                if (prev) prev.classList.remove('active-pick');
+                if (prev !== tok) tok.classList.add('active-pick');
+            };
+            bank.appendChild(tok);
+        });
+    }
+
+    function renderFillInterface(q) {
+        let lineCont = document.getElementById('fillCodeLine'); lineCont.innerHTML = '';
+        let slotIdx = 0;
+
+        q.parts.forEach((p) => {
+            if (p === "[_]") {
+                let currentSlot = slotIdx;
+                let slot = document.createElement('span'); slot.className = 'code-slot';
+                
+                if (selectedTokensForCurrentQuestion[currentSlot] !== null) {
+                    slot.innerText = selectedTokensForCurrentQuestion[currentSlot];
+                    slot.style.borderStyle = "solid";
+                    slot.onclick = () => {
+                        selectedTokensForCurrentQuestion[currentSlot] = null;
+                        renderFillInterface(q);
+                    };
+                } else {
+                    slot.innerText = "[ _ ]";
+                    slot.onclick = () => {
+                        let activeNode = document.querySelector('#tokenBank .token.active-pick');
+                        if (activeNode) {
+                            selectedTokensForCurrentQuestion[currentSlot] = activeNode.innerText;
+                            renderFillInterface(q);
+                        }
+                    };
+                }
+                lineCont.appendChild(slot);
+                slotIdx++;
+            } else {
+                let node = document.createElement('span'); node.innerText = p;
+                lineCont.appendChild(node);
+            }
+        });
+
+        let bank = document.getElementById('tokenBank'); bank.innerHTML = '';
+        q.tokens.forEach(t => {
+            if (selectedTokensForCurrentQuestion.includes(t)) return;
+            let tok = document.createElement('span'); tok.className = 'token'; tok.innerText = t;
+            tok.onclick = () => { 
+                let prev = document.querySelector('#tokenBank .token.active-pick');
+                if (prev) prev.classList.remove('active-pick');
+                if (prev !== tok) tok.classList.add('active-pick');
+            };
+            bank.appendChild(tok);
+        });
+    }
+
+    function submitOrNext() {
+        let q = activeQ[qIdx];
+        if (q.type === "drag") {
+            answers[qIdx] = Array.from(document.getElementById('dragList').children).map(c => parseInt(c.dataset.id));
+        } else if (q.type === "fill") {
+            answers[qIdx] = [...selectedTokensForCurrentQuestion];
+        }
+
+        qIdx++;
+        if (qIdx < activeQ.length) showQuestion();
+        else endQuiz();
+    }
+
+    function endQuiz() {
+        document.getElementById('quizBox').style.display = 'none';
+        document.getElementById('resultScreen').style.display = 'block';
+
+        let correct = 0;
+        let rev = document.getElementById('revContainer'); rev.innerHTML = '';
+
+        activeQ.forEach((q, i) => {
+            let isOk = false;
+            let userAnsString = "";
+            let correctAnsString = "";
+
+            if (q.type === 'choice') {
+                if (q.multi) {
+                    let uArr = answers[i] ? [...answers[i]].sort() : [];
+                    let cArr = [...q.c].sort();
+                    isOk = JSON.stringify(uArr) === JSON.stringify(cArr);
+                    userAnsString = uArr.length > 0 ? uArr.map(idx => q.a[idx]).join(" | ") : "Nincs megadva";
+                    correctAnsString = cArr.map(idx => q.a[idx]).join(" | ");
+                } else {
+                    isOk = (answers[i] === q.c);
+                    userAnsString = answers[i] !== null ? q.a[answers[i]] : "Nincs megadva";
+                    correctAnsString = q.a[q.c];
+                }
+            } 
+            else if (q.type === 'drag') {
+                let currentIds = answers[i].map(item => item.i !== undefined ? item.i : item);
+                isOk = JSON.stringify(currentIds) === JSON.stringify(q.c);
+                userAnsString = currentIds.map(idx => q.a[idx]).join(" ➔ ");
+                correctAnsString = q.c.map(idx => q.a[idx]).join(" ➔ ");
+            } 
+            else if (q.type === 'matching') {
+                isOk = JSON.stringify(answers[i]) === JSON.stringify(q.c);
+                userAnsString = answers[i] ? answers[i].map((val, idx) => `${q.leftLabels[idx]}:${val || '[Üres]'}`).join(", ") : "Nincs megadva";
+                correctAnsString = q.c.map((val, idx) => `${q.leftLabels[idx]}:${val}`).join(", ");
+            }
+            else if (q.type === 'fill') {
+                isOk = JSON.stringify(answers[i]) === JSON.stringify(q.c);
+                userAnsString = answers[i] ? answers[i].map(val => val || "[Üres]").join(" ") : "Nincs megadva";
+                correctAnsString = q.c.join(" ");
+            }
+
+            if (isOk) correct++;
+
+            let item = document.createElement('div');
+            item.className = `review-item ${isOk ? 'good-l' : 'bad-l'}`;
+            let codeHtml = q.code ? `<div class="review-code">${q.code}</div>` : '';
+            
+            item.innerHTML = `
+                <div class="review-q-text">${i+1}. ${q[lang]}</div>
+                ${codeHtml}
+                <div class="review-answers-box">
+                    <div>${txts[lang].uAns} <span class="review-ans ${isOk ? 'ans-user-good' : 'ans-user-bad'}">${userAnsString}</span></div>
+                    ${!isOk ? `<div>${txts[lang].cAns} <span class="review-ans ans-correct-spec">${correctAnsString}</span></div>` : ''}
+                </div>
+            `;
+            rev.appendChild(item);
+        });
+
+        let pct = Math.round((correct / activeQ.length) * 100);
+        document.getElementById('resPct').innerText = `${pct}%`;
+        document.getElementById('resScore').innerText = `${correct} / ${activeQ.length}`;
+        document.getElementById('resGood').innerText = correct;
+        document.getElementById('resBad').innerText = activeQ.length - correct;
+
+        let badge = document.getElementById('statusBadge');
+        if (pct >= 70) { badge.innerText = txts[lang].passed; badge.className = "badge-status badge-passed"; }
+        else { badge.innerText = txts[lang].failed; badge.className = "badge-status badge-failed"; }
+
+        document.getElementById('revSection').style.display = 'block';
+    }
+</script>
+</body>
+</html>
